@@ -5,6 +5,10 @@ import org.springframework.stereotype.Component;
 import javax.persistence.*;
 import java.time.LocalDate;
 
+/**
+ * @author Tejashree Surve
+ * @Purpose : This is Entity class for User.
+ */
 @Entity
 @Component
 @Table(name = "springuserdata")
@@ -52,9 +56,13 @@ public class UserEntity {
         this.birthdate = birthdate;
     }
 
-    public String getEmail() { return email; }
+    public String getEmail() {
+        return email;
+    }
 
-    public void setEmail(String email) { this.email = email; }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getPassword() {
         return password;

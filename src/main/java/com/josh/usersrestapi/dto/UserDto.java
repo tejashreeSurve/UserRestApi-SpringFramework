@@ -6,7 +6,10 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
-
+/**
+ * @author Tejashree Surve
+ * @Purpose : This is DTO for User.
+ */
 public class UserDto {
     @NotEmpty
     private String firstName;
@@ -16,10 +19,10 @@ public class UserDto {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthdate;
     @NotEmpty
-    @Pattern(regexp = "\\w+\\@\\w+\\.\\w+",message = "Please Enter Email-id")
+    @Pattern(regexp = "\\w+\\@\\w+\\.\\w+", message = "Please Enter Email-id")
     private String email;
     @NotEmpty
-    @Pattern(regexp = "\\w+\\d+",message ="Password must contain both character and numeric value")
+    @Pattern(regexp = "\\w+\\d+", message = "Password must contain both character and numeric value")
     private String password;
 
     public String getFirstName() {
@@ -42,13 +45,9 @@ public class UserDto {
         return birthdate;
     }
 
-    public String getEmail() {
-        return email;
-    }
+    public String getEmail() { return email; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public void setEmail(String email) { this.email = email; }
 
     public void setBirthdate(LocalDate birthdate) {
         this.birthdate = birthdate;

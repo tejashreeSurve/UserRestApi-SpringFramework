@@ -2,10 +2,15 @@ package com.josh.usersrestapi.utility;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * @author Tejashree Surve
+ * @Purpose : This is Response class which create Response message.
+ */
 public class Response {
     private int statuscode;
     private String message;
     private Object data;
+
     @Autowired
     public Response(int statuscode, String message, Object data) {
         this.statuscode = statuscode;

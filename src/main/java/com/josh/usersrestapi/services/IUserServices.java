@@ -1,10 +1,14 @@
 package com.josh.usersrestapi.services;
 
-import com.josh.usersrestapi.dto.EditUser;
+import com.josh.usersrestapi.dto.EditUserDto;
 import com.josh.usersrestapi.dto.LoginDto;
 import com.josh.usersrestapi.dto.UserDto;
 import com.josh.usersrestapi.utility.Response;
 
+/**
+ * @author Tejashree Surve
+ * @Purpose : This is User Service Interface.
+ */
 public interface IUserServices {
 
     Response registerUser(UserDto userDto);
@@ -13,9 +17,9 @@ public interface IUserServices {
 
     Response login(LoginDto loginDto);
 
-    Response logout();
+    Response logout(String token);
 
-    Response updateUser(EditUser editUser);
+    Response updateUser(String token, EditUserDto editUserDto);
 
     Response validateUser(String token);
 
