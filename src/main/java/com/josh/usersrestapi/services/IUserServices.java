@@ -9,6 +9,7 @@ import com.josh.usersrestapi.utility.Response;
  * @author Tejashree Surve
  * @Purpose : This is User Service Interface.
  */
+
 public interface IUserServices {
 
     Response registerUser(UserDto userDto);

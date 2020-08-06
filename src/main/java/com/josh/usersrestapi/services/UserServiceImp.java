@@ -42,7 +42,7 @@ public class UserServiceImp implements IUserServices {
         UserEntity userData = modelMapper.map(userDto, UserEntity.class);
         // save data in database
         userRepository.save(userData);
-        return new Response(Integer.parseInt(messageInfo.Success_Request), messageInfo.User_Register, "Successfully Register");
+        return new Response(Integer.parseInt(messageInfo.Success_Request), messageInfo.User_Register, "Successfully Registered");
     }
 
     // Get All User

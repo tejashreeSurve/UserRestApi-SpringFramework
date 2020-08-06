@@ -60,4 +60,16 @@ public class UserDto {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public UserDto(@NotEmpty String firstName, @NotEmpty String lastName, @NotNull LocalDate birthdate, @NotEmpty @Pattern(regexp = "\\w+\\@\\w+\\.\\w+", message = "Please Enter Email-id") String email, @NotEmpty @Pattern(regexp = "\\w+\\d+", message = "Password must contain both character and numeric value") String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthdate = birthdate;
+        this.email = email;
+        this.password = password;
+    }
+
+    public UserDto(){
+
+    }
 }

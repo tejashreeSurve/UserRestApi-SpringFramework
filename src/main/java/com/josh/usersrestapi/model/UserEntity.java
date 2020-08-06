@@ -87,4 +87,5 @@ public class UserEntity {
     public void setUserLogedin(boolean userLogedin) {
         isUserLogedin = userLogedin;
     }
+
 }
