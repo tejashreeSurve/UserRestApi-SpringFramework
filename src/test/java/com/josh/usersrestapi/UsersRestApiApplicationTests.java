@@ -6,7 +6,6 @@ import com.josh.usersrestapi.dto.EditUserDto;
 import com.josh.usersrestapi.dto.LoginDto;
 import com.josh.usersrestapi.dto.UserDto;
 import com.josh.usersrestapi.model.UserEntity;
-import com.josh.usersrestapi.repository.UserRepository;
 import com.josh.usersrestapi.services.IUserServices;
 import com.josh.usersrestapi.utility.Response;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
@@ -26,9 +24,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -86,6 +81,7 @@ class UsersRestApiApplicationTests {
                 .andExpect(jsonPath("$.data.firstName",is(userEntity.getFirstName())))
                 .andDo(print());
     }
+
     @Test
     public void loginUser() throws  Exception{
         LoginDto loginDto = new LoginDto();
@@ -102,7 +98,6 @@ class UsersRestApiApplicationTests {
                 .andExpect(jsonPath("$.data",is(response.getData())))
                 .andDo(print());
     }
-
 
     @Test
     public void editUser() throws Exception{
