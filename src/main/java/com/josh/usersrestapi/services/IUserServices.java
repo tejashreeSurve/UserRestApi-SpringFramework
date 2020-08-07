@@ -14,7 +14,7 @@ public interface IUserServices {
 
     Response registerUser(UserDto userDto);
 
-    Response getAllUser();
+    Response getAllUser(String token);
 
     Response login(LoginDto loginDto);
 

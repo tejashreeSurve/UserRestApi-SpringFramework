@@ -43,13 +43,20 @@ public class UserServiceImp implements IUserServices {
         // save data in database
         UserEntity user =userRepository.save(userData);
         System.out.println("User"+user.getFirstName());
-        return new Response(Integer.parseInt(messageInfo.Success_Request), messageInfo.User_Register, "Successfully Registered");
+        return new Response(Integer.parseInt(messageInfo.Success_Request), messageInfo.User_Register, "User is Successfully Valide");
     }
 
     // Get All User
     @Override
-    public Response getAllUser() {
-        return new Response(Integer.parseInt(messageInfo.Success_Request), messageInfo.User_Display, userRepository.findAll());
+    public Response getAllUser(String token) {
+        String userEmail = jwtToken.getToken(token);
+        UserEntity user = userRepository.findByEmail(userEmail);
+        if (user == null)
+            return new Response(Integer.parseInt(messageInfo.Bad_Request), messageInfo.User_Not_Exist, "Invalid Email-id");
+        if(user.isValidate()) {
+            return new Response(Integer.parseInt(messageInfo.Success_Request), messageInfo.User_Display, userRepository.findAll());
+        }
+        return new Response(Integer.parseInt(messageInfo.Bad_Request), "Please Verify User before Login","Validate User") ;
     }
 
     // Login User
@@ -65,12 +72,12 @@ public class UserServiceImp implements IUserServices {
         if (user.isValidate()) {
             // check if password is correct
             if (user.getPassword().equals(loginDto.getPassword())) {
-                return new Response(Integer.parseInt(messageInfo.Success_Request), messageInfo.User_Login, "User is Successfully Login");
+                return new Response(Integer.parseInt(messageInfo.Success_Request), messageInfo.User_Login, token);
             } else {
                 return new Response(Integer.parseInt(messageInfo.Bad_Request), messageInfo.Invalid_Password, "Please enter valid password");
             }
         }
-        return new Response(Integer.parseInt(messageInfo.Bad_Request), token, "Please Verify User before Login");
+        return new Response(Integer.parseInt(messageInfo.Bad_Request), "Please Verify User before Login","Validate User") ;
     }
 
     // Logout User

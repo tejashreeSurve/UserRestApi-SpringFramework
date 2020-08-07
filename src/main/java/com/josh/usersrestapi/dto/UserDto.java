@@ -10,18 +10,23 @@ import java.time.LocalDate;
  * @author Tejashree Surve
  * @Purpose : This is DTO for User.
  */
+
 public class UserDto {
     @NotEmpty
+    @NotNull(message = "First Name must not be null")
     private String firstName;
     @NotEmpty
+    @NotNull(message = "Last Name must not be null")
     private String lastName;
-    @NotNull
+    @NotNull(message = "Birth Date must not be null")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthdate;
     @NotEmpty
+    @NotNull(message = "Email-id must not be null")
     @Pattern(regexp = "\\w+\\@\\w+\\.\\w+", message = "Please Enter Email-id")
     private String email;
     @NotEmpty
+    @NotNull(message = "Password must not be null")
     @Pattern(regexp = "\\w+\\d+", message = "Password must contain both character and numeric value")
     private String password;
 

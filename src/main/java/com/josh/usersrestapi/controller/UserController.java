@@ -28,9 +28,9 @@ public class UserController {
     }
 
     // Get All User Rest Api
-    @GetMapping("/getAllUser")
-    public ResponseEntity<Response> getAllUser(){
-        Response response = userServices.getAllUser();
+    @GetMapping("/getAllUser/{token}")
+    public ResponseEntity<Response> getAllUser(@PathVariable String token){
+        Response response = userServices.getAllUser(token);
         return new ResponseEntity<Response>(response,HttpStatus.OK);
     }
 
