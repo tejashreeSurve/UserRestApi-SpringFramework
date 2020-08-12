@@ -3,11 +3,13 @@ package com.josh.usersrestapi;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * @author Tejashree Surve
+ * @Purpose : Main method class.
+ */
 @SpringBootApplication
 public class UsersRestApiApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(UsersRestApiApplication.class, args);
 	}
-
 }

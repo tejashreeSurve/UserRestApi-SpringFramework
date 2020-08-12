@@ -9,7 +9,7 @@ import javax.validation.constraints.Pattern;
  */
 public class LoginDto {
     @NotEmpty
-    @Pattern(regexp = "\\w+\\@\\w+\\.\\w+", message = "Please Enter Email-id")
+    @Pattern(regexp = "\\w+\\@\\w+\\.\\w+", message = "Please Enter Valid Email-id")
     private String userEmail;
     @NotEmpty
     @Pattern(regexp = "\\w+\\d+", message = "Password must contain both character and numeric value")

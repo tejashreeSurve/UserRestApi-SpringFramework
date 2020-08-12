@@ -7,6 +7,10 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * @author Tejashree Surve
+ * @Purpose ModelMapper Configuration.
+ */
 @Configuration
 public class ModelMapperConfigurtion {
     @Bean
@@ -15,5 +19,4 @@ public class ModelMapperConfigurtion {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         return modelMapper;
     }
-
 }

@@ -1,18 +1,15 @@
 package com.josh.usersrestapi.model;
 
-import org.springframework.stereotype.Component;
-
 import javax.persistence.*;
 import java.time.LocalDate;
 
 /**
  * @author Tejashree Surve
- * @Purpose : This is Entity class for User.
+ * @Purpose : This is Entity class for User Table.
  */
 @Entity
-@Component
 @Table(name = "springuserdata")
-public class UserEntity {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
@@ -22,7 +19,6 @@ public class UserEntity {
     private String email;
     private String password;
     private boolean isValidate = false;
-    private boolean isUserLogedin = false;
 
     public int getId() {
         return id;
@@ -79,13 +75,4 @@ public class UserEntity {
     public void setValidate(boolean validate) {
         isValidate = validate;
     }
-
-    public boolean isUserLogedin() {
-        return isUserLogedin;
-    }
-
-    public void setUserLogedin(boolean userLogedin) {
-        isUserLogedin = userLogedin;
-    }
-
 }

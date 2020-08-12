@@ -1,7 +1,7 @@
 package com.josh.usersrestapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.josh.usersrestapi.model.UserEntity;
+import com.josh.usersrestapi.model.User;
 import com.josh.usersrestapi.repository.UserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,47 +27,47 @@ public class UserServicesTest {
 
     @Test
     public void saveUser()throws Exception{
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId(1);
-        userEntity.setFirstName("tanvi");
-        userEntity.setLastName("surve");
-        userEntity.setBirthdate(LocalDate.parse("2009-10-19"));
-        userEntity.setEmail("teju@gmail.com");
-        userEntity.setPassword("teju123");
-        UserEntity result = userRepository.save(userEntity);
+        User user = new User();
+        user.setId(1);
+        user.setFirstName("tanvi");
+        user.setLastName("surve");
+        user.setBirthdate(LocalDate.parse("2009-10-19"));
+        user.setEmail("teju@gmail.com");
+        user.setPassword("teju123");
+        User result = userRepository.save(user);
         System.out.println(new ObjectMapper().writeValueAsString(result));
-        assertThat(result.getFirstName()).isEqualTo(userEntity.getFirstName());
+        assertThat(result.getFirstName()).isEqualTo(user.getFirstName());
 
     }
 
     @Test
     public void checkIfEmailExist(){
-        String email = "teju123@gmail.com";
-        UserEntity userEntity = userRepository.findByEmail(email);
-        assertNotNull(userEntity);
-        assertThat(userEntity.getEmail()).isEqualTo(email);
+        String email = "Teju123@gmail.com";
+        User user = userRepository.findByEmail(email);
+        assertNotNull(user);
+        assertThat(user.getEmail()).isEqualTo(email);
     }
 
     @Test
     public void checkIfEmailNotExist(){
         String email = "teju@gmail.com";
-        UserEntity userEntity = userRepository.findByEmail(email);
-        assertNull(userEntity);
+        User user = userRepository.findByEmail(email);
+        assertNull(user);
     }
 
     @Test
     public void updateUser()throws  Exception{
-        UserEntity userEntity = userRepository.findByEmail("tanvi@gmail.com");
-        System.out.println(new ObjectMapper().writeValueAsString(userEntity));
-        userEntity.setFirstName("Tanvir");
-        UserEntity editedUser = userRepository.save(userEntity);
+        User user = userRepository.findByEmail("teju1223@gmail.com");
+        System.out.println(new ObjectMapper().writeValueAsString(user));
+        user.setFirstName("Tanvir");
+        User editedUser = userRepository.save(user);
         System.out.println(new ObjectMapper().writeValueAsString(editedUser));
-        assertThat(userEntity.getId()).isEqualTo(editedUser.getId());
+        assertThat(user.getId()).isEqualTo(editedUser.getId());
     }
 
     @Test
     public void userList()throws  Exception{
-        List<UserEntity> userList = userRepository.findAll();
+        List<User> userList = userRepository.findAll();
         System.out.println(new ObjectMapper().writeValueAsString(userList));
         assertThat(userList).size().isGreaterThan(0);
     }

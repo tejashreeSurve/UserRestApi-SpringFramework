@@ -16,7 +16,7 @@ public class EditUserDto {
     @NotEmpty
     private String lastName;
     @NotNull
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd",shape = JsonFormat.Shape.STRING)
     private LocalDate birthdate;
 
     public String getFirstName() {
@@ -35,9 +35,7 @@ public class EditUserDto {
         this.lastName = lastName;
     }
 
-    public LocalDate getBirthdate() {
-        return birthdate;
-    }
+    public LocalDate getBirthdate() { return birthdate; }
 
     public void setBirthdate(LocalDate birthdate) {
         this.birthdate = birthdate;

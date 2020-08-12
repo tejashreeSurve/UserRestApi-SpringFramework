@@ -5,8 +5,8 @@ import com.josh.usersrestapi.controller.UserController;
 import com.josh.usersrestapi.dto.EditUserDto;
 import com.josh.usersrestapi.dto.LoginDto;
 import com.josh.usersrestapi.dto.UserDto;
-import com.josh.usersrestapi.model.UserEntity;
-import com.josh.usersrestapi.services.IUserServices;
+import com.josh.usersrestapi.model.User;
+import com.josh.usersrestapi.services.IUserService;
 import com.josh.usersrestapi.utility.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -40,45 +40,43 @@ class UsersRestApiApplicationTests {
     @Autowired
     private WebApplicationContext context;
     @MockBean
-    private IUserServices userServices;
+    private IUserService userServices;
 
     ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     public void getAll()throws Exception{
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId(1);
-        userEntity.setFirstName("teju");
-        List<UserEntity> allUser = Arrays.asList(userEntity);
+        User user = new User();
+        user.setId(1);
+        user.setFirstName("teju");
+        List<User> allUser = Arrays.asList(user);
         Response response = new Response(200,"User is Successfully Displayed",allUser);
-        given(userServices.getAllUser()).willReturn(
-                response
-        );
-        mockMvc.perform(get("/getAllUser").content(MediaType.APPLICATION_JSON_VALUE)).
+        given(userServices.getAllUser()).willReturn(allUser);
+        mockMvc.perform(get("/user/getAllUser/eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJ0ZWp1MTIzQGdtYWlsLmNvbSIsImlhdCI6MTU5NjEyMzIzNX0.ANBDh01HjrZCcQp3OA9ZvI563IkGbhlG0sg2LYoHzrk").content(MediaType.APPLICATION_JSON_VALUE)).
                 andExpect(status().isOk()).andExpect(jsonPath("$.statuscode",is(response.getStatuscode())))
                 .andExpect(jsonPath("$.message",is(response.getMessage())))
-                .andExpect(jsonPath("$.data[0].id",is(userEntity.getId())));
+                .andExpect(jsonPath("$.data[0].id",is(user.getId())));
     }
 
     @Test
     public void addUser() throws Exception{
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId(1);
-        userEntity.setFirstName("kanak");
-        userEntity.setLastName("Surve");
-        userEntity.setBirthdate(LocalDate.parse("2008-11-10"));
-        userEntity.setEmail("kanak@gmail.com");
-        userEntity.setPassword("kanak");
-        Response response = new Response(200,"User Register Successfully",userEntity);
+        User user= new User();
+        user.setId(1);
+        user.setFirstName("kanak");
+        user.setLastName("Surve");
+        user.setBirthdate(LocalDate.parse("2008-11-10"));
+        user.setEmail("kanak@gmail.com");
+        user.setPassword("kanak");
+        Response response = new Response(200,"User Register Successfully",user);
         String userDtoString = "{\"firstName\":\"kanak\",\"lastName\":\"Surve\", \"birthdate\":\"2008-11-10\", \"email\":\"kanak@gmail.com\", \"password\":\"kanak\" }";
-        when(userServices.registerUser(ArgumentMatchers.any(UserDto.class))).thenReturn(response);
-        mockMvc.perform(post("/register")
+        when(userServices.registerUser(ArgumentMatchers.any(UserDto.class))).thenReturn(user);
+        mockMvc.perform(post("/user/register")
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(userDtoString)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.statuscode",is(response.getStatuscode())))
                 .andExpect(jsonPath("$.message",is(response.getMessage())))
-                .andExpect(jsonPath("$.data.firstName",is(userEntity.getFirstName())))
+                .andExpect(jsonPath("$.data.firstName",is(user.getFirstName())))
                 .andDo(print());
     }
 
@@ -89,7 +87,7 @@ class UsersRestApiApplicationTests {
         loginDto.setPassword("teju123");
         Response response = new Response(200,"User is Successfully Login","User is Successfully Login");
         when(userServices.login(ArgumentMatchers.any(LoginDto.class))).thenReturn(response);
-        mockMvc.perform(post("/login").content(new ObjectMapper().writeValueAsString(loginDto))
+        mockMvc.perform(post("/user/login").content(new ObjectMapper().writeValueAsString(loginDto))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -101,23 +99,23 @@ class UsersRestApiApplicationTests {
 
     @Test
     public void editUser() throws Exception{
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId(2);
-        userEntity.setFirstName("teju");
-        userEntity.setLastName("surve");
-        userEntity.setBirthdate(LocalDate.parse("2008-11-10"));
-        userEntity.setEmail("teju123@gmail.com");
-        userEntity.setPassword("teju123");
-        Response response = new Response(200,"User is Successfully Updated",userEntity);
+        User user = new User();
+        user.setId(2);
+        user.setFirstName("teju");
+        user.setLastName("surve");
+        user.setBirthdate(LocalDate.parse("2008-11-10"));
+        user.setEmail("teju123@gmail.com");
+        user.setPassword("teju123");
+        Response response = new Response(200,"User is Successfully Updated",user);
         String userDtoString = "{\"firstName\":\"teju\",\"lastName\":\"surve\", \"birthdate\":\"2008-11-10\" }";
-        when(userServices.updateUser(ArgumentMatchers.anyString(),ArgumentMatchers.any(EditUserDto.class))).thenReturn(response);
-        mockMvc.perform(post("/updateUser/"+"eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJ0ZWp1MTIzQGdtYWlsLmNvbSIsImlhdCI6MTU5NjEyMzIzNX0.ANBDh01HjrZCcQp3OA9ZvI563IkGbhlG0sg2LYoHzrk")
+        when(userServices.updateUser(ArgumentMatchers.anyInt(),ArgumentMatchers.any(EditUserDto.class))).thenReturn(user);
+        mockMvc.perform(post("/user/updateUser/"+"eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJ0ZWp1MTIzQGdtYWlsLmNvbSIsImlhdCI6MTU5NjEyMzIzNX0.ANBDh01HjrZCcQp3OA9ZvI563IkGbhlG0sg2LYoHzrk")
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(userDtoString)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.statuscode",is(response.getStatuscode())))
                 .andExpect(jsonPath("$.message",is(response.getMessage())))
-                .andExpect(jsonPath("$.data.firstName",is(userEntity.getFirstName())))
+                .andExpect(jsonPath("$.data.firstName",is(user.getFirstName())))
                 .andDo(print());
     }
 }

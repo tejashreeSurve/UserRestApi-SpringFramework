@@ -1,5 +1,6 @@
 package com.josh.usersrestapi.utility;
 
+import com.josh.usersrestapi.exception.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -10,10 +11,10 @@ import java.util.Date;
 
 /**
  * @author Tejashree Surve
- * @Purpose : This is Jwt Token.
+ * @Purpose : This is Jwt Token Utility.
  */
 @Component
-public class JwtToken {
+public class JwtTokenUtil {
     @Autowired
     MessageInfo messageInfo;
 
@@ -21,31 +22,29 @@ public class JwtToken {
 
     static String secretKey = "secret";
 
-    // Generate Token
+    /**
+     * Generate token for User Email.
+     * @param email User email.
+     * @return generate token in String format.
+     */
     public String generateToken(String email){
-        return Jwts.builder().setId(email).setIssuedAt(new Date(System.currentTimeMillis())).
+        Date date = new Date();
+        return Jwts.builder().setId(email).setIssuedAt(new Date(System.currentTimeMillis())).setExpiration(new Date(System.currentTimeMillis() + (24 * 60 * 60 * 1000))).
                 signWith(algorithm,secretKey).compact();
     }
 
-    // Get Token
-    public String getToken(String token){
+    /**
+     * Get All Claims For given token.
+     * @param token User token.
+     * @return User Email in String object.
+     */
+    public String getAllClaims(String token){
         Claims claims = null;
         try{
             claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
         }catch(Exception e){
-                System.out.println(e+ messageInfo.Invalid_Token);
+            throw new InvalidTokenException(messageInfo.Invalid_Token);
         }
         return claims.getId();
     }
-
-    // Refresh Token
-    public void refreshToken(String token){
-        final Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
-        try {
-            claims.setExpiration(new Date(System.currentTimeMillis() + 2000));
-        }catch(Exception e){
-            System.out.println("Jwt:"+e);
-        }
-    }
-
 }
