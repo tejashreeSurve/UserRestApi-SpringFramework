@@ -9,9 +9,11 @@ import com.josh.usersrestapi.model.User;
 import com.josh.usersrestapi.repository.BlackListTokenRepository;
 import com.josh.usersrestapi.repository.UserRepository;
 import com.josh.usersrestapi.services.IUserService;
+import com.josh.usersrestapi.services.UserServiceImp;
 import com.josh.usersrestapi.utility.JwtTokenUtil;
 import com.josh.usersrestapi.utility.MessageInfo;
 import com.josh.usersrestapi.utility.Response;
+import com.sun.istack.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +39,7 @@ public class UserController {
     @Autowired
     private BlackListTokenRepository blackListTokenRepository;
 
+    private static final Logger LOGGER = Logger.getLogger(UserController.class);
     /**
      * New User Registration.
      * @param userDto User Dto object.
@@ -49,8 +52,10 @@ public class UserController {
         // check if user is present or not
         if (userIsPresent != null)
             throw new RegisterException(messageInfo.User_Exist);
+        LOGGER.info("User is Successfully Validate for registerUser");
         // generate token for validation
         String token = jwtTokenUtil.generateToken(checkEmail);
+        LOGGER.info("Token is Generated Successfully");
         System.out.println(token);
         User user = userServices.registerUser(userDto);
         if(user == null)
@@ -67,10 +72,14 @@ public class UserController {
     public ResponseEntity<Response> getAllUser(@RequestHeader String token){
         String userEmail = jwtTokenUtil.getAllClaims(token);
         User user = userRepository.findByEmail(userEmail);
+        LOGGER.warning("Verify token from blackListToken ");
         blackListTokenRepository.findByToken(token).ifPresent(e->{throw new UnauthorizedAccessException(messageInfo.Unauthorized_Access);});
+        LOGGER.info("Token is successfully Verified");
         if (user == null)
             throw new LoginException(messageInfo.User_Not_Exist);
+        LOGGER.info("User is Successfully founds");
         if(user.isValidate()) {
+            LOGGER.info("User is Successfully Validate for getAllUser");
             List<User> userList = userServices.getAllUser();
             if (userList == null)
                 throw new ListNotExistException(messageInfo.UserList_Not_Exist);
@@ -91,7 +100,7 @@ public class UserController {
         String token = jwtTokenUtil.generateToken(loginDto.getUserEmail());
         if (user == null)
             throw new LoginException(messageInfo.User_Not_Exist);
-
+        LOGGER.info("User is Successfully Validate for login");
         User loginUser =  userServices.login(loginDto,user);
         if(loginUser != null) {
             if (loginUser.isValidate()) {
@@ -113,10 +122,13 @@ public class UserController {
     public ResponseEntity<Response> update(@RequestHeader String token, @Valid @RequestBody EditUserDto editUserDto){
         String userEmail = jwtTokenUtil.getAllClaims(token);
         User isUserPresent = userRepository.findByEmail(userEmail);
+        LOGGER.warning("Verify token from blackListToken ");
         blackListTokenRepository.findByToken(token).ifPresent(e->{throw new UnauthorizedAccessException(messageInfo.Unauthorized_Access);});
+        LOGGER.info("Token is successfully Verified");
         // check if user is present
         if (isUserPresent == null)
             throw  new UpdateUserException(messageInfo.User_Not_Exist);
+        LOGGER.info("User is Successfully Validate for updateUser");
         User editedUser= userServices.updateUser(isUserPresent.getId(),editUserDto);
         return new ResponseEntity<Response>(new Response(Integer.parseInt(messageInfo.Success_Request), messageInfo.User_Updated, editedUser), HttpStatus.OK);
     }
@@ -130,10 +142,13 @@ public class UserController {
     public ResponseEntity<Response> validate(@RequestHeader String token){
         String userEmail = jwtTokenUtil.getAllClaims(token);
         User isUserPresent = userRepository.findByEmail(userEmail);
+        LOGGER.warning("Verify token from blackListToken ");
         blackListTokenRepository.findByToken(token).ifPresent(e->{throw new UnauthorizedAccessException(messageInfo.Unauthorized_Access);});
+        LOGGER.info("Token is successfully Verified");
         // check if user is present
         if (isUserPresent == null)
             throw new ValidateException(messageInfo.User_Not_Exist);
+        LOGGER.info("User is Successfully Validate for validate");
         User user = userServices.validateUser(isUserPresent);
         return new ResponseEntity<Response>(new Response(Integer.parseInt(messageInfo.Success_Request), messageInfo.Verified_User, "You can Login Successfully"), HttpStatus.OK);
     }

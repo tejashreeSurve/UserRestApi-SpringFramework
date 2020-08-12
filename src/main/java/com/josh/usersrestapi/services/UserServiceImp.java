@@ -10,6 +10,7 @@ import com.josh.usersrestapi.repository.BlackListTokenRepository;
 import com.josh.usersrestapi.repository.UserRepository;
 import com.josh.usersrestapi.utility.JwtTokenUtil;
 import com.josh.usersrestapi.utility.MessageInfo;
+import com.sun.istack.logging.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,7 @@ public class UserServiceImp implements IUserService {
     @Autowired
     private BlackListTokenRepository blackListTokenRepository;
 
+    private static final Logger LOGGER = Logger.getLogger(UserServiceImp.class);
     /**
      * Add new User in Database.
      * @param userDto User Dto object.
@@ -44,6 +46,7 @@ public class UserServiceImp implements IUserService {
         User userData = modelMapper.map(userDto, User.class);
         // save data in database
         User saveUser =userRepository.save(userData);
+        LOGGER.info("User is saved Successfully");
         return saveUser;
     }
 
@@ -66,6 +69,7 @@ public class UserServiceImp implements IUserService {
     public User login(LoginDto loginDto,User user) {
         // check if password is correct
         if (user.getPassword().equals(loginDto.getPassword())) {
+            LOGGER.info("User password is Successfully verified");
             return user;
         }
         return null;
@@ -80,6 +84,7 @@ public class UserServiceImp implements IUserService {
     public BlackListedToken logout(String token) {
         BlackListedToken blackListedToken = new BlackListedToken();
         blackListedToken.setToken(token);
+        LOGGER.info("Token is add into BlackListedTokenTable");
         BlackListedToken editedTokenList = blackListTokenRepository.save(blackListedToken);
         return editedTokenList;
     }
@@ -98,6 +103,7 @@ public class UserServiceImp implements IUserService {
         user.setLastName(editUserDto.getLastName());
         user.setBirthdate(editUserDto.getBirthdate());
         User editedUser = userRepository.save(user);
+        LOGGER.info("User is Updated Successfully");
         return editedUser;
     }
 
@@ -111,6 +117,7 @@ public class UserServiceImp implements IUserService {
         // set validate value to true
         user.setValidate(true);
         User validateUser = userRepository.save(user);
+        LOGGER.info("User is Validated Successfully");
         return validateUser;
     }
 }
