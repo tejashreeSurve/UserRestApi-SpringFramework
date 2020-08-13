@@ -9,7 +9,6 @@ import com.josh.usersrestapi.model.User;
 import com.josh.usersrestapi.repository.BlackListTokenRepository;
 import com.josh.usersrestapi.repository.UserRepository;
 import com.josh.usersrestapi.services.IUserService;
-import com.josh.usersrestapi.services.UserServiceImp;
 import com.josh.usersrestapi.utility.JwtTokenUtil;
 import com.josh.usersrestapi.utility.MessageInfo;
 import com.josh.usersrestapi.utility.Response;
