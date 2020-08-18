@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -51,9 +53,9 @@ class UsersRestApiApplicationTests {
         user.setFirstName("teju");
         List<User> allUser = new ArrayList<>();
         allUser.add(user);
-        Response response = new Response(200,"User is Successfully Displayed",allUser);
-        when(userServices.getAllUser()).thenReturn(allUser);
-        System.out.println(when(userServices.getAllUser()).thenReturn(allUser));
+        Response response = new Response(HttpStatus.OK.value(),"User is Successfully Displayed",allUser);
+        when(userServices.getAllUser("kanak@gmail.com")).thenReturn(allUser);
+        System.out.println(when(userServices.getAllUser(anyString())).thenReturn(allUser));
         mockMvc.perform(get("/getAllUser").content(MediaType.APPLICATION_JSON_VALUE).header("token","eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJhbGthMTIzQGdtYWlsLmNvbSIsImlhdCI6MTU5NzI0NzE2MSwiZXhwIjoxNTk3MzMzNTYxfQ.-e2pmAer3GLPg16FeElnihY-qglYxOh0MOfheKogjq8"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.statuscode",is(response.getStatuscode())))
                 .andExpect(jsonPath("$.message",is(response.getMessage())))
@@ -69,10 +71,10 @@ class UsersRestApiApplicationTests {
         user.setBirthdate(LocalDate.parse("2008-11-10"));
         user.setEmail("kanak@gmail.com");
         user.setPassword("kanak123");
-        Response response = new Response(200,"User Register Successfully",user);
+        Response response = new Response(HttpStatus.OK.value(),"User Register Successfully",user);
         String userDtoString = "{\"firstName\":\"kanak\",\"lastName\":\"Surve\", \"birthdate\":\"2008-11-10\", \"email\":\"kanak@gmail.com\", \"password\":\"kanak123\" }";
 
-        when(userServices.registerUser(ArgumentMatchers.any(UserDto.class))).thenReturn(user);
+        when(userServices.registerUser(anyString(),ArgumentMatchers.any(UserDto.class))).thenReturn(user);
 
         mockMvc.perform(post("/registerUser")
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(userDtoString)
@@ -98,8 +100,8 @@ class UsersRestApiApplicationTests {
         loginDto.setUserEmail("alka123@gmail.com");
         loginDto.setPassword("alka123");
         String token = jwtTokenUtil.generateToken(user.getEmail());
-        Response response = new Response(200,"User is Successfully Login",token);
-        when(userServices.login(ArgumentMatchers.any(LoginDto.class),ArgumentMatchers.any(User.class))).thenReturn(user);
+        Response response = new Response(HttpStatus.OK.value(),"User is Successfully Login",token);
+        when(userServices.login(anyString(),ArgumentMatchers.any(LoginDto.class))).thenReturn(user);
         mockMvc.perform(post("/login").content(new ObjectMapper().writeValueAsString(loginDto))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -118,9 +120,9 @@ class UsersRestApiApplicationTests {
         user.setBirthdate(LocalDate.parse("2008-11-10"));
         user.setEmail("teju123@gmail.com");
         user.setPassword("teju123");
-        Response response = new Response(200,"User is Successfully Updated",user);
+        Response response = new Response(HttpStatus.OK.value(),"User is Successfully Updated",user);
         String userDtoString = "{\"firstName\":\"teju\",\"lastName\":\"surve\", \"birthdate\":\"2008-11-10\" }";
-        when(userServices.updateUser(ArgumentMatchers.anyInt(),ArgumentMatchers.any(EditUserDto.class))).thenReturn(user);
+        when(userServices.updateUser(ArgumentMatchers.anyString(),ArgumentMatchers.any(EditUserDto.class))).thenReturn(user);
         mockMvc.perform(post("/updateUser")
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(userDtoString)
                 .header("token","eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJhbGthMTIzQGdtYWlsLmNvbSIsImlhdCI6MTU5NzI0NzE2MSwiZXhwIjoxNTk3MzMzNTYxfQ.-e2pmAer3GLPg16FeElnihY-qglYxOh0MOfheKogjq8")
@@ -144,8 +146,8 @@ class UsersRestApiApplicationTests {
         user.setBirthdate(LocalDate.parse("2008-11-10"));
         user.setEmail("kanak@gmail.com");
         user.setPassword("kanak123");
-        Response response = new Response(200,"User is Successfully Verified","You can Login Successfully");
-        when(userServices.validateUser(ArgumentMatchers.any(User.class))).thenReturn(user);
+        Response response = new Response(HttpStatus.OK.value(),"User is Successfully Verified","You can Login Successfully");
+        when(userServices.validateUser(ArgumentMatchers.anyString())).thenReturn(user);
         mockMvc.perform(get("/validateUser").content(MediaType.APPLICATION_JSON_VALUE).header("token",token))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.statuscode",is(response.getStatuscode())))
                 .andExpect(jsonPath("$.message",is(response.getMessage())))

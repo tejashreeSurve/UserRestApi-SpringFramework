@@ -30,8 +30,6 @@ public class UserController {
     @Autowired
     private IUserService userServices;
     @Autowired
-    private MessageInfo messageInfo;
-    @Autowired
     private JwtTokenUtil jwtTokenUtil;
     @Autowired
     private UserRepository userRepository;
@@ -47,19 +45,16 @@ public class UserController {
     @PostMapping("/registerUser")
     public ResponseEntity<Response> register(@Valid @RequestBody UserDto userDto){
         String checkEmail = userDto.getEmail();
-        User userIsPresent = userRepository.findByEmail(checkEmail);
-        // check if user is present or not
-        if (userIsPresent != null)
-            throw new RegisterException(messageInfo.User_Exist);
+        User user= userServices.registerUser(checkEmail,userDto);
+        // check if userService return user or throw exception
+        if(user == null)
+            throw new UserNotSaveException(MessageInfo.User_Not_Save);
         LOGGER.info("User is Successfully Validate for registerUser");
         // generate token for validation
         String token = jwtTokenUtil.generateToken(checkEmail);
         LOGGER.info("Token is Generated Successfully");
         System.out.println(token);
-        User user = userServices.registerUser(userDto);
-        if(user == null)
-            throw new UserNotSaveException(messageInfo.User_Not_Save);
-        return new ResponseEntity<Response>(new Response(Integer.parseInt(messageInfo.Success_Request), messageInfo.User_Register, user), HttpStatus.OK);
+        return new ResponseEntity<Response>(new Response(HttpStatus.OK.value(), MessageInfo.User_Register, user), HttpStatus.OK);
     }
 
     /**
@@ -70,21 +65,13 @@ public class UserController {
     @GetMapping("/getAllUser")
     public ResponseEntity<Response> getAllUser(@RequestHeader String token){
         String userEmail = jwtTokenUtil.getAllClaims(token);
-        User user = userRepository.findByEmail(userEmail);
         LOGGER.warning("Verify token from blackListToken ");
-        blackListTokenRepository.findByToken(token).ifPresent(e->{throw new UnauthorizedAccessException(messageInfo.Unauthorized_Access);});
-        LOGGER.info("Token is successfully Verified");
-        if (user == null)
-            throw new LoginException(messageInfo.User_Not_Exist);
-        LOGGER.info("User is Successfully founds");
-        if(user.isValidate()) {
-            LOGGER.info("User is Successfully Validate for getAllUser");
-            List<User> userList = userServices.getAllUser();
-            if (userList == null)
-                throw new ListNotExistException(messageInfo.UserList_Not_Exist);
-            return new ResponseEntity<Response>(new Response(Integer.parseInt(messageInfo.Success_Request),messageInfo.User_Display,userList),HttpStatus.OK);
-        }
-        return new ResponseEntity<Response>(new Response(Integer.parseInt(messageInfo.Bad_Request),messageInfo.User_Not_Verified,"Validate User"),HttpStatus.BAD_REQUEST);
+        // check if token is present in blacklist
+        blackListTokenRepository.findByToken(token).ifPresent(e->{throw new UnauthorizedAccessException(MessageInfo.Unauthorized_Access);});
+        List<User> userList = userServices.getAllUser(userEmail);
+        if (userList == null)
+            throw new ListNotExistException(MessageInfo.UserList_Not_Exist);
+        return new ResponseEntity<Response>(new Response(HttpStatus.OK.value(),MessageInfo.User_Display,userList),HttpStatus.OK);
     }
 
     /**
@@ -94,21 +81,17 @@ public class UserController {
      */
     @PostMapping("/login")
     public ResponseEntity<Response> login(@Valid @RequestBody LoginDto loginDto){
-        User user = userRepository.findByEmail(loginDto.getUserEmail());
-        // check if user is present
-        String token = jwtTokenUtil.generateToken(loginDto.getUserEmail());
-        if (user == null)
-            throw new LoginException(messageInfo.User_Not_Exist);
+        User loginUser =  userServices.login(loginDto.getUserEmail(),loginDto);
         LOGGER.info("User is Successfully Validate for login");
-        User loginUser =  userServices.login(loginDto,user);
+        String token = jwtTokenUtil.generateToken(loginDto.getUserEmail());
         if(loginUser != null) {
             if (loginUser.isValidate()) {
-                return new ResponseEntity<Response>(new Response(Integer.parseInt(messageInfo.Success_Request), messageInfo.User_Login, token), HttpStatus.OK);
+                return new ResponseEntity<Response>(new Response(HttpStatus.OK.value(), MessageInfo.User_Login, token), HttpStatus.OK);
             }else{
-                return new ResponseEntity<Response>(new Response(Integer.parseInt(messageInfo.Bad_Request), "Please Verify User before Login","Validate User"), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<Response>(new Response(HttpStatus.BAD_REQUEST.value(), "Please Verify User before Login","Validate User"), HttpStatus.BAD_REQUEST);
             }
         }
-        return new ResponseEntity<Response>(new Response(Integer.parseInt(messageInfo.Bad_Request), messageInfo.Invalid_Password, "Please enter valid password"), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<Response>(new Response(HttpStatus.BAD_REQUEST.value(), MessageInfo.Invalid_Password, "Please enter valid password"), HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -120,16 +103,15 @@ public class UserController {
     @PostMapping("/updateUser")
     public ResponseEntity<Response> update(@RequestHeader String token, @Valid @RequestBody EditUserDto editUserDto){
         String userEmail = jwtTokenUtil.getAllClaims(token);
-        User isUserPresent = userRepository.findByEmail(userEmail);
+        User editedUser= userServices.updateUser(userEmail,editUserDto);
         LOGGER.warning("Verify token from blackListToken ");
-        blackListTokenRepository.findByToken(token).ifPresent(e->{throw new UnauthorizedAccessException(messageInfo.Unauthorized_Access);});
+        // check if token is present in blacklist
+        blackListTokenRepository.findByToken(token).ifPresent(e->{throw new UnauthorizedAccessException(MessageInfo.Unauthorized_Access);});
         LOGGER.info("Token is successfully Verified");
-        // check if user is present
-        if (isUserPresent == null)
-            throw  new UpdateUserException(messageInfo.User_Not_Exist);
+        if(editedUser == null)
+            throw new UpdateUserException(MessageInfo.User_Not_Update);
         LOGGER.info("User is Successfully Validate for updateUser");
-        User editedUser= userServices.updateUser(isUserPresent.getId(),editUserDto);
-        return new ResponseEntity<Response>(new Response(Integer.parseInt(messageInfo.Success_Request), messageInfo.User_Updated, editedUser), HttpStatus.OK);
+        return new ResponseEntity<Response>(new Response(HttpStatus.OK.value(), MessageInfo.User_Updated, editedUser), HttpStatus.OK);
     }
 
     /**
@@ -140,16 +122,14 @@ public class UserController {
     @GetMapping("/validateUser")
     public ResponseEntity<Response> validate(@RequestHeader String token){
         String userEmail = jwtTokenUtil.getAllClaims(token);
-        User isUserPresent = userRepository.findByEmail(userEmail);
         LOGGER.warning("Verify token from blackListToken ");
-        blackListTokenRepository.findByToken(token).ifPresent(e->{throw new UnauthorizedAccessException(messageInfo.Unauthorized_Access);});
+        // check if token is present in blacklist
+        blackListTokenRepository.findByToken(token).ifPresent(e->{throw new UnauthorizedAccessException(MessageInfo.Unauthorized_Access);});
         LOGGER.info("Token is successfully Verified");
-        // check if user is present
-        if (isUserPresent == null)
-            throw new ValidateException(messageInfo.User_Not_Exist);
-        LOGGER.info("User is Successfully Validate for validate");
-        User user = userServices.validateUser(isUserPresent);
-        return new ResponseEntity<Response>(new Response(Integer.parseInt(messageInfo.Success_Request), messageInfo.Verified_User, "You can Login Successfully"), HttpStatus.OK);
+        User validateUser = userServices.validateUser(userEmail);
+        if(validateUser == null)
+            throw new ValidateException(MessageInfo.User_Validation);
+        return new ResponseEntity<Response>(new Response(HttpStatus.OK.value(), MessageInfo.Verified_User, "You can Login Successfully"), HttpStatus.OK);
     }
 
     /**
@@ -160,6 +140,6 @@ public class UserController {
     @GetMapping("/logout")
     public ResponseEntity<Response> logout(@RequestHeader String token){
         BlackListedToken blackListedToken = userServices.logout(token);
-        return new ResponseEntity<Response>(new Response(Integer.parseInt(messageInfo.Success_Request), messageInfo.User_Logout, "Successfully Log-out"), HttpStatus.OK);
+        return new ResponseEntity<Response>(new Response(HttpStatus.OK.value(), MessageInfo.User_Logout, "Successfully Log-out"), HttpStatus.OK);
     }
 }

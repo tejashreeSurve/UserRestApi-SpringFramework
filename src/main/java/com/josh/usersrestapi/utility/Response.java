@@ -1,6 +1,7 @@
 package com.josh.usersrestapi.utility;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 
 /**
  * @author Tejashree Surve

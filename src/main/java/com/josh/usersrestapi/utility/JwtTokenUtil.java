@@ -15,8 +15,6 @@ import java.util.Date;
  */
 @Component
 public class JwtTokenUtil {
-    @Autowired
-    MessageInfo messageInfo;
 
     SignatureAlgorithm algorithm = SignatureAlgorithm.HS256;
 
@@ -43,7 +41,7 @@ public class JwtTokenUtil {
         try{
             claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
         }catch(Exception e){
-            throw new InvalidTokenException(messageInfo.Invalid_Token);
+            throw new InvalidTokenException(MessageInfo.Invalid_Token);
         }
         return claims.getId();
     }

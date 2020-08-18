@@ -1,5 +1,7 @@
 package com.josh.usersrestapi.dto;
 
+import com.josh.usersrestapi.utility.MessageInfo;
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 
@@ -9,10 +11,10 @@ import javax.validation.constraints.Pattern;
  */
 public class LoginDto {
     @NotEmpty
-    @Pattern(regexp = "\\w+\\@\\w+\\.\\w+", message = "Please Enter Valid Email-id")
+    @Pattern(regexp = MessageInfo.Email_Regex, message = MessageInfo.Invalid_Email_Format)
     private String userEmail;
     @NotEmpty
-    @Pattern(regexp = "\\w+\\d+", message = "Password must contain both character and numeric value")
+    @Pattern(regexp = MessageInfo.Password_Regex, message = MessageInfo.Invalid_Password_Format)
     private String password;
 
     public String getUserEmail() {

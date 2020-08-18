@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -39,8 +40,8 @@ public class UserServiceWithoutMockTest {
         user.setFirstName("teju");
         List<User> allUser = new ArrayList<>();
         allUser.add(user);
-        Response response = new Response(200,"User is Successfully Displayed",allUser);
-        List<User> userList = userServices.getAllUser();
+        Response response = new Response(HttpStatus.BAD_REQUEST.value(),"User is Successfully Displayed",allUser);
+        List<User> userList = userServices.getAllUser("Teju123@gmail.com");
         assertThat(userList).size().isGreaterThan(0);
     }
 
@@ -59,7 +60,7 @@ public class UserServiceWithoutMockTest {
         user.setBirthdate(LocalDate.parse("2008-11-10"));
         user.setEmail("kanak@gmail.com");
         user.setPassword("kanak123");
-        User saveUser = userServices.registerUser(userDto);
+        User saveUser = userServices.registerUser("kanak@gmail.com",userDto);
         assertThat(saveUser.getFirstName()).isEqualTo(userDto.getFirstName());
     }
 
@@ -69,7 +70,7 @@ public class UserServiceWithoutMockTest {
         editUserDto.setFirstName("kanak");
         editUserDto.setLastName("yadav");
         editUserDto.setBirthdate(LocalDate.parse("2008-11-10"));
-        User editeduser = userServices.updateUser(18,editUserDto);
+        User editeduser = userServices.updateUser("kanak@gmail.com",editUserDto);
         assertThat(editeduser.getFirstName()).isEqualTo(editeduser.getFirstName());
     }
 
@@ -86,7 +87,7 @@ public class UserServiceWithoutMockTest {
         LoginDto loginDto = new LoginDto();
         loginDto.setUserEmail("alka123@gmail.com");
         loginDto.setPassword("alka123");
-        User logedUser = userServices.login(loginDto,user);
+        User logedUser = userServices.login("kanak@gmail.com",loginDto);
         assertThat(loginDto.getPassword()).isEqualTo(logedUser.getPassword());
     }
 
@@ -99,7 +100,7 @@ public class UserServiceWithoutMockTest {
         user.setBirthdate(LocalDate.parse("1998-01-21"));
         user.setEmail("alka123@gmail.com");
         user.setPassword("alka123");
-        User validUser = userServices.validateUser(user);
+        User validUser = userServices.validateUser("kanak@gmail.com");
         assertThat(validUser.isValidate()== true);
     }
 }

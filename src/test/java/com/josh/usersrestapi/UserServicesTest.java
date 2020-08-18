@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -43,7 +44,8 @@ public class UserServicesTest {
     @Test
     public void checkIfEmailExist(){
         String email = "Teju123@gmail.com";
-        User user = userRepository.findByEmail(email);
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        User user = optionalUser.get();
         assertNotNull(user);
         assertThat(user.getEmail()).isEqualTo(email);
     }
@@ -51,13 +53,15 @@ public class UserServicesTest {
     @Test
     public void checkIfEmailNotExist(){
         String email = "teju@gmail.com";
-        User user = userRepository.findByEmail(email);
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        User user = optionalUser.get();
         assertNull(user);
     }
 
     @Test
     public void updateUser()throws  Exception{
-        User user = userRepository.findByEmail("teju1223@gmail.com");
+        Optional<User> optionalUser = userRepository.findByEmail("teju1223@gmail.com");
+        User user = optionalUser.get();
         System.out.println(new ObjectMapper().writeValueAsString(user));
         user.setFirstName("Tanvir");
         User editedUser = userRepository.save(user);

@@ -15,16 +15,16 @@ import java.util.List;
  */
 public interface IUserService {
 
-    User registerUser(UserDto userDto);
+    User registerUser(String userEmail,UserDto userDto);
 
-    List<User> getAllUser();
+    List<User> getAllUser(String userEmail);
 
-    User login(LoginDto loginDto,User user);
+    User login(String userEmail,LoginDto loginDto);
 
     BlackListedToken logout(String token);
 
-    User updateUser(Integer userId,EditUserDto editUserDto);
+    User updateUser(String userEmail,EditUserDto editUserDto);
 
-    User validateUser(User user);
+    User validateUser(String Email);
 
 }
